@@ -1,0 +1,107 @@
+#!/bin/bash
+
+case "$1" in
+    configure)
+        :
+    ;;
+    abort-upgrade|abort-remove|abort-configure)
+        exit 0
+    ;;
+    *)
+        echo "postinst called with unknown argument '$1'" 1>&2
+        exit 1
+    ;;
+esac
+
+declare -a cydia
+cydia=($CYDIA)
+
+OS=`/usr/sbin/sysctl -n kern.osversion`
+PROD=`/usr/sbin/sysctl -n hw.machine`
+
+echo "Moving files"
+if [[ $OS == 8* || $OS == 9* || $OS == 10* ]]; then # iOS 4/5/6
+    if [[ -f /var/aquila/aquila ]]; then
+        echo "Existing aquila install detected, will only update untether binary."
+        mv /tmp/aquila/aquila /var/aquila/
+        return $?
+    fi
+    mkdir -p /var/aquila/
+    aquila="aquila"
+    amfi_bypass="amfi_bypass"
+    case $OS in
+        8* ) aquila+="_4"; amfi_bypass+="_4_5";;
+        9* ) amfi_bypass+="_4_5";;
+    esac
+    mv /tmp/aquila/$aquila /var/aquila/
+    mv /tmp/aquila/$amfi_bypass.dylib /var/aquila/
+    if [[ -f /etc/launchd.conf.bak ]]; then
+        echo "/etc/launchd.conf.bak found, will not replace launchd.conf."
+    else
+        mv /etc/launchd.conf /etc/launchd.conf.bak
+        mv /tmp/aquila/launchd.conf /etc/
+    fi
+elif [[ $OS == 11* ]]; then # iOS 7
+    if [[ -f /aquila ]]; then
+        echo "Existing aquila install detected, will only update untether binary."
+        mv /tmp/aquila/aquila /
+        return $?
+    fi
+    mkdir -p /Library/LaunchDaemons/ /System/Library/Caches/com.apple.dyld/ /var/aquila/backup/LaunchDaemons/
+    touch /System/Library/Caches/com.apple.dyld/enable-dylibs-to-override-cache
+    mv /System/Library/LaunchDaemons/* /Library/LaunchDaemons/
+    mv /usr/lib/libmis.dylib /var/aquila/backup/
+
+    xpcd_cache="/System/Library/Caches/com.apple.xpcd/xpcd_cache.dylib"
+    if [[ -f "$xpcd_cache" ]]; then
+        mv "$xpcd_cache" /var/aquila/backup/
+        rm -f /System/Library/Caches/com.apple.xpcd/*
+    fi
+
+    shopt -s nullglob
+
+    move_files=(
+        "com.apple.CrashHousekeeping.plist"
+        "com.apple.MobileFileIntegrity.plist"
+        "com.apple.jetsamproperties*"
+        "com.saurik.Cydia.Startup.plist"
+        "com.apple.sandboxd.plist"
+    )
+    for file in "${move_files[@]}"; do
+        matches=(/Library/LaunchDaemons/$file)
+        ((${#matches[@]})) && mv "${matches[@]}" /System/Library/LaunchDaemons/
+    done
+
+    move_files=(
+        "com.evad3rs.evasi0n7.untether.plist"
+        "io.pangu.axe.untether.plist"
+    )
+    for file in "${move_files[@]}"; do
+        matches=(/Library/LaunchDaemons/$file)
+        ((${#matches[@]})) && mv "${matches[@]}" /var/aquila/backup/LaunchDaemons/
+    done
+
+    move_files=(
+        "com.apple.mobile.softwareupdated.plist"
+        "com.apple.softwareupdateservicesd.plist"
+    )
+    for file in "${move_files[@]}"; do
+        src="/Library/LaunchDaemons/$file"
+        backup="/Library/LaunchDaemons/$file.backup"
+        if [[ -f "$src" && ! -f "$backup" ]]; then
+            mv "$src" "$backup"
+        fi
+    done
+
+    shopt -u nullglob
+
+    if [[ -f /usr/libexec/CrashHousekeeping && ! -f /usr/libexec/CrashHousekeeping.backup ]]; then
+        mv /usr/libexec/CrashHousekeeping /usr/libexec/CrashHousekeeping.backup
+    fi
+    rm -f /usr/libexec/CrashHousekeeping
+    ln -sf /aquila /usr/libexec/CrashHousekeeping
+
+    mv /tmp/aquila/aquila /
+    mv /tmp/aquila/libmis.dylib /usr/lib/
+fi
+touch /.aquila_installed

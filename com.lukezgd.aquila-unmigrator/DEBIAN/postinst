@@ -1,0 +1,46 @@
+#!/bin/bash
+
+case "$1" in
+    configure)
+        :
+    ;;
+    abort-upgrade|abort-remove|abort-configure)
+        exit 0
+    ;;
+    *)
+        echo "postinst called with unknown argument '$1'" 1>&2
+        exit 1
+    ;;
+esac
+
+declare -a cydia
+cydia=($CYDIA)
+
+OS=`/usr/sbin/sysctl -n kern.osversion`
+PROD=`/usr/sbin/sysctl -n hw.machine`
+
+echo "Moving files"
+if [[ $OS == 8* || $OS == 9* || $OS == 10* ]]; then # iOS 4/5/6
+    rm /etc/launchd.conf
+    mv /etc/launchd.conf.bak /etc/launchd.conf
+elif [[ $OS == 11* ]]; then # iOS 7
+    mv /Library/LaunchDaemons/com.apple* /System/Library/LaunchDaemons/
+    mv /var/aquila/backup/libmis.dylib /usr/lib/
+
+    if [[ -f /var/aquila/backup/xpcd_cache.dylib ]]; then
+        mv /var/aquila/backup/xpcd_cache.dylib /System/Library/Caches/com.apple.xpcd/
+    fi
+
+    if [[ -e /var/aquila/backup/LaunchDaemons/* ]]; then
+        mv /var/aquila/backup/LaunchDaemons/* /System/Library/LaunchDaemons/
+    fi
+
+    rm /usr/libexec/CrashHousekeeping
+    if [[ -f /lyncis ]]; then
+        ln -sf /lyncis /usr/libexec/CrashHousekeeping
+    elif [[ -f /usr/libexec/CrashHousekeeping.backup ]]; then
+        mv /usr/libexec/CrashHousekeeping.backup /usr/libexec/CrashHousekeeping
+    fi
+fi
+
+echo "You may now remove Aquila Unmigrator."

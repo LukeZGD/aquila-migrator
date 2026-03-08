@@ -1,0 +1,10 @@
+Package: com.lukezgd.aquila-unmigrator
+Name: Aquila Unmigrator
+Version: 2.1
+Architecture: iphoneos-arm
+Depends: firmware (>= 4.3), firmware (<= 7.1.2)
+Conflicts: cy+cpu.arm64
+Description: Revert changes made by Aquila Migrator. Remove this package after the unmigration process.
+Author: LukeZGD
+Maintainer: LukeZGD
+Section: System
