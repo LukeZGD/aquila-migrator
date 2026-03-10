@@ -1,8 +1,8 @@
 Package: com.lukezgd.aquila-migrator
 Name: Aquila Migrator
-Version: 2.1
+Version: 2.1-1
 Architecture: iphoneos-arm
-Depends: firmware (>= 4.3), firmware (<= 7.1.2)
+Depends: firmware (>= 6.0), firmware (<= 7.1.2)
 Conflicts: cy+cpu.arm64, com.lukezgd.pangu7-migrator
 Description: Migrate from other iOS 4.3.x/5/6/7 jailbreaks to Aquila v2.1 Untether. Can also be used to upgrade older Aquila/Lyncis installs. Remove this package after the migration process.
 Author: LukeZGD
