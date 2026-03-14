@@ -1,6 +1,6 @@
 Package: com.lukezgd.aquila-unmigrator
 Name: Aquila Unmigrator
-Version: 2.1-2
+Version: 2.1-3
 Architecture: iphoneos-arm
 Depends: firmware (>= 4.3), firmware (<= 7.1.2)
 Conflicts: cy+cpu.arm64

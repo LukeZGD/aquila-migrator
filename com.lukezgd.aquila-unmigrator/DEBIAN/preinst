@@ -4,13 +4,13 @@ OS=`/usr/sbin/sysctl -n kern.osversion`
 PROD=`/usr/sbin/sysctl -n hw.machine`
 
 case "$1" in
-  install|upgrade )
-    if [[ $OS == 8* || $OS == 9* || $OS == 10* ]] && [[ ! -e /etc/launchd.conf.bak ]]; then # iOS 4/5/6
-      echo "/etc/launchd.conf.bak not found, cannot continue."
-      exit 1
-    elif [[ $OS == 11* && ! -d /var/aquila/backup/ ]]; then # iOS 7
-      echo "/var/aquila/backup/ not found, cannot continue."
-      exit 1
-    fi
-  ;;
+    install|upgrade )
+        if [[ $OS == 8* || $OS == 9* || $OS == 10* ]] && [[ ! -e /etc/launchd.conf.bak ]]; then # iOS 4/5/6
+            echo "/etc/launchd.conf.bak not found, cannot continue."
+            exit 1
+        elif [[ $OS == 11* && ! -d /var/aquila/backup/ ]]; then # iOS 7
+            echo "/var/aquila/backup/ not found, cannot continue."
+            exit 1
+        fi
+    ;;
 esac
