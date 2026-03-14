@@ -33,8 +33,8 @@ if [[ $OS == 8* || $OS == 9* || $OS == 10* ]]; then # iOS 4/5/6
         8* ) aquila+="_4"; amfi_bypass+="_4_5";;
         9* ) amfi_bypass+="_4_5";;
     esac
-    mv /tmp/aquila/$aquila /var/aquila/
-    mv /tmp/aquila/$amfi_bypass.dylib /var/aquila/
+    mv /tmp/aquila/$aquila /var/aquila/aquila
+    mv /tmp/aquila/$amfi_bypass.dylib /var/aquila/amfi_bypass.dylib
     if [[ -f /etc/launchd.conf.bak ]]; then
         echo "/etc/launchd.conf.bak found, will not replace launchd.conf."
     else
