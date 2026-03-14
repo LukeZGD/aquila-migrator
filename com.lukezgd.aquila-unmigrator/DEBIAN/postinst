@@ -21,7 +21,7 @@ PROD=`/usr/sbin/sysctl -n hw.machine`
 
 echo "Moving files"
 if [[ $OS == 8* || $OS == 9* || $OS == 10* ]]; then # iOS 4/5/6
-    rm /etc/launchd.conf
+    rm -rf /etc/launchd.conf /var/aquila/
     mv /etc/launchd.conf.bak /etc/launchd.conf
 elif [[ $OS == 11* ]]; then # iOS 7
     mv /Library/LaunchDaemons/com.apple* /System/Library/LaunchDaemons/
@@ -41,6 +41,9 @@ elif [[ $OS == 11* ]]; then # iOS 7
     elif [[ -f /usr/libexec/CrashHousekeeping.backup ]]; then
         mv /usr/libexec/CrashHousekeeping.backup /usr/libexec/CrashHousekeeping
     fi
+
+    rm -rf /aquila /var/aquila/
 fi
+rm /.aquila_installed
 
 echo "You may now remove Aquila Unmigrator."
