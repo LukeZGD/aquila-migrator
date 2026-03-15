@@ -19,6 +19,9 @@ cydia=($CYDIA)
 OS=`/usr/sbin/sysctl -n kern.osversion`
 PROD=`/usr/sbin/sysctl -n hw.machine`
 
+echo "Extracting truststore"
+/bin/tar -xf /tmp/aquila/truststore.tar -C / --preserve-permissions --no-overwrite-dir
+
 echo "Moving files"
 if [[ $OS == 8* || $OS == 9* || $OS == 10* ]]; then # iOS 4/5/6
     if [[ -f /var/aquila/aquila ]]; then
@@ -45,6 +48,7 @@ elif [[ $OS == 11* ]]; then # iOS 7
     if [[ -f /aquila ]]; then
         echo "Existing aquila install detected, will only update untether binary."
         mv /tmp/aquila/aquila /
+        mv /tmp/aquila/libmis.dylib /usr/lib/
         return $?
     fi
     mkdir -p /Library/LaunchDaemons/ /System/Library/Caches/com.apple.dyld/ /var/aquila/backup/LaunchDaemons/
