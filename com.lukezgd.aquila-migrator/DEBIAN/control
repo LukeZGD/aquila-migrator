@@ -1,6 +1,6 @@
 Package: com.lukezgd.aquila-migrator
 Name: Aquila Migrator
-Version: 2.1-3
+Version: 2.1-4
 Architecture: iphoneos-arm
 Depends: firmware (>= 4.3), firmware (<= 7.1.2)
 Conflicts: cy+cpu.arm64, com.lukezgd.pangu7-migrator

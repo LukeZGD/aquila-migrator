@@ -4,12 +4,16 @@ OS=`/usr/sbin/sysctl -n kern.osversion`
 PROD=`/usr/sbin/sysctl -n hw.machine`
 
 case $PROD in
-    iPhone[45],* | iPad2,* | iPad3,* | iPod5,1 )
-        case $OS in
-            9* | 10* )
-                echo "Migration on iOS 5/6 is currently not supported for A5(X)/A6(X)."
-                exit 1
-            ;;
-        esac
+    iPhone4,1 | iPad2,* | iPad3,[123] | iPod5,1 )
+        if [[ $OS == 9* ]]; then
+            echo "Migration on iOS 5 is currently not supported for A5(X)."
+            exit 1
+        fi
+    ;;
+    iPhone5,* | iPad3,* )
+        if [[ $OS == 10* ]]; then
+            echo "Migration on iOS 6 is currently not supported for A6(X)."
+            exit 1
+        fi
     ;;
 esac

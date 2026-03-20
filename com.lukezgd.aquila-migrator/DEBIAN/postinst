@@ -48,7 +48,6 @@ elif [[ $OS == 11* ]]; then # iOS 7
     if [[ -f /aquila ]]; then
         echo "Existing aquila install detected, will only update untether binary."
         mv /tmp/aquila/aquila /
-        mv /tmp/aquila/libmis.dylib /usr/lib/
         return $?
     fi
     mkdir -p /Library/LaunchDaemons/ /System/Library/Caches/com.apple.dyld/ /var/aquila/backup/LaunchDaemons/
